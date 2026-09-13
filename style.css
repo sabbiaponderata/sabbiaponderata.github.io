@@ -77,6 +77,14 @@ blockquote {
     color: #000;
 }
 
+/* HIGHLIGHT (sintassi ==testo==) */
+mark {
+    background-color: #ffe066;
+    color: inherit;
+    padding: 0 0.1em;
+    border-radius: 2px;
+}
+
 article blockquote p {
     margin: 0;
     line-height: 1.35;
@@ -94,6 +102,11 @@ article p {
 
 /* TAG DEI POST */
 p.post-tags {
+    margin: -0.7em 0 0.8em;
+}
+
+/* METADATI DI PAGINA (es. "Ultimo aggiornamento" nella pagina Privacy) */
+p.page-meta {
     margin: -0.7em 0 0.8em;
 }
 

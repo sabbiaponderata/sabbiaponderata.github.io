@@ -12,6 +12,6 @@ Il nome descrive il metodo. La sabbia rappresenta il tempo che scorre, cadenzato
 
 > Il tempo non si compra: si decide solo come investirlo.
 
-Sono una persona che aspira all'intenzionalità, che apprezza il minimalismo in quanto espressione di essenziale. Sono naturalmente attratto dalla razionalità e dalla sostanza nella forma. Nella vita mi occupo di tutt'altro: lavoro nel campo della sicurezza informatica. Sono un appassionato di basket, mi piacciono gli scacchi e leggere soprattutto saggistica (non-fiction).
+Sono una persona che aspira all'intenzionalità, che apprezza il minimalismo in quanto espressione di essenziale. Sono naturalmente attratto dalla razionalità e dalla sostanza nella forma. ==Nella vita mi occupo di tutt'altro==: lavoro nel campo della sicurezza informatica. Sono un appassionato di basket, mi piacciono gli scacchi e leggere soprattutto saggistica (non-fiction).
 
 Per contatti: [sabbiaponderata@proton.me](mailto:sabbiaponderata@proton.me)

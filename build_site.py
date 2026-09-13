@@ -52,9 +52,10 @@ def parse_markdown(file_path):
         
     text = "".join(content_lines)
 
-    # Conversione spartana da Markdown a HTML (Grassetto, Link e Citazioni)
+    # Conversione spartana da Markdown a HTML (Grassetto, Link, Citazioni e Highlight)
     def inline(text):
         text = re.sub(r"\*\*(.*?)\*\*", r"<strong>\1</strong>", text)
+        text = re.sub(r"==(.*?)==", r"<mark>\1</mark>", text)
         text = re.sub(r"\[(.*?)\]\((.*?)\)", r'<a href="\2">\1</a>', text)
         return text
 
@@ -159,12 +160,13 @@ def main():
     with open(TEMPLATE_NAVBAR, "r", encoding="utf-8") as f:
         navbar = f.read().format(site_name=SITE_NAME)
     with open(TEMPLATE_FOOTER, "r", encoding="utf-8") as f:
-        footer = f.read().format(site_name=SITE_NAME, year=datetime.now().year)
+        footer = f.read().format(site_name=SITE_NAME, year=datetime.now().year, privacy_link="privacy.html")
 
-    def render_page(title, content, navbar_html, css_path):
+    def render_page(title, content, navbar_html, css_path, footer_html=None):
         """Compone una pagina completa dagli elementi condivisi"""
         return template.format(title=title, content=content,
-                               navbar=navbar_html, footer=footer, css_path=css_path)
+                               navbar=navbar_html, footer=footer_html or footer,
+                               css_path=css_path)
 
     # Navbar adattata per i file dentro la cartella /posts
     posts_navbar = navbar.replace('href="index.html"', 'href="../index.html"')
@@ -172,11 +174,14 @@ def main():
     posts_navbar = posts_navbar.replace('href="about.html"', 'href="../about.html"')
     posts_navbar = posts_navbar.replace('src="logo.png"', 'src="../logo.png"')
 
+    # Footer adattato per i file dentro la cartella /posts
+    posts_footer = footer.replace('href="privacy.html"', 'href="../privacy.html"')
+
     # 2. Elabora tutti i file Markdown nella cartella contents (escluso about.md)
     posts = []
     if os.path.exists(FOLDER_CONTENTS):
         for file in os.listdir(FOLDER_CONTENTS):
-            if file == "about.md" or not file.endswith(".md"):
+            if file in ("about.md", "privacy.md") or not file.endswith(".md"):
                 continue
             file_path = os.path.join(FOLDER_CONTENTS, file)
             post_data = parse_markdown(file_path)
@@ -192,7 +197,7 @@ def main():
         post_content_fixed = fix_links_for_post(post['content'])
 
         article_html = f"<article><h1>{post['title']}</h1><p><small>Pubblicato il: {time_tag(post['date'])}</small></p>{render_tags(post['tags'])}{post_content_fixed}</article>"
-        full_page = render_page(page_title(post["title"]), article_html, posts_navbar, "../style.css")
+        full_page = render_page(page_title(post["title"]), article_html, posts_navbar, "../style.css", posts_footer)
 
         output_path = os.path.join(FOLDER_POSTS, post["filename"])
         with open(output_path, "w", encoding="utf-8") as f:
@@ -249,6 +254,18 @@ def main():
         with open("about.html", "w", encoding="utf-8") as f:
             f.write(about_page)
         print("Generata pagina About: about.html")
+
+    # 7. Genera la pagina PRIVACY (privacy.html) dal sorgente contents/privacy.md
+    privacy_file = os.path.join(FOLDER_CONTENTS, "privacy.md")
+    if os.path.exists(privacy_file):
+        privacy_data = parse_markdown(privacy_file)
+        privacy_body = re.sub(r"^<h1>.*?</h1>", "", privacy_data["content"], count=1)
+        privacy_meta = f'<p class="page-meta"><small>Ultimo aggiornamento: {time_tag(privacy_data["date"])}</small></p>'
+        privacy_content = f'<section aria-labelledby="privacy-title"><h1 id="privacy-title">{privacy_data["title"]}</h1><article>{privacy_meta}{privacy_body}</article></section>'
+        privacy_page = render_page(page_title(privacy_data["title"]), privacy_content, navbar, "style.css")
+        with open("privacy.html", "w", encoding="utf-8") as f:
+            f.write(privacy_page)
+        print("Generata pagina Privacy: privacy.html")
 
 if __name__ == "__main__":
     main()
