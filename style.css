@@ -65,6 +65,13 @@ article {
     border-radius: 4px;
 }
 
+/* IMMAGINI */
+article img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
 /* CITAZIONI (blockquote) E TIPOGRAFIA ARTICOLI */
 blockquote {
     --quote-pad-top: 0.7em;

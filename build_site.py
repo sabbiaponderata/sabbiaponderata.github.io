@@ -52,10 +52,11 @@ def parse_markdown(file_path):
         
     text = "".join(content_lines)
 
-    # Conversione spartana da Markdown a HTML (Grassetto, Link, Citazioni e Highlight)
+    # Conversione spartana da Markdown a HTML (Grassetto, Link, Citazioni, Highlight e Immagini)
     def inline(text):
         text = re.sub(r"\*\*(.*?)\*\*", r"<strong>\1</strong>", text)
         text = re.sub(r"==(.*?)==", r"<mark>\1</mark>", text)
+        text = re.sub(r"!\[(.*?)\]\((.*?)\)", r'<img src="\2" alt="\1">', text)
         text = re.sub(r"\[(.*?)\]\((.*?)\)", r'<a href="\2">\1</a>', text)
         return text
 
@@ -138,17 +139,18 @@ def fix_links_for_home(text):
 
 def fix_links_for_post(text):
     """
-    Se l'utente scrive un link nel markdown pensato per la radice (es. about.html),
-    lo corregge aggiungendo '../' perché le singole pagine dei post sono dentro la cartella /posts/.
+    Se l'utente scrive un link o un'immagine nel markdown pensati per la radice
+    (es. images/foto.png o about.html), li corregge aggiungendo '../' perché le
+    singole pagine dei post sono dentro la cartella /posts/.
     """
-    # Aggiunge ../ solo se il link non inizia già con http, https o ../
+    # Aggiunge ../ solo se il riferimento non inizia già con http, https, ../ o mailto
     def replacer(match):
-        url = match.group(1)
-        if url.startswith(('http://', 'https://', '../')):
+        attr, url = match.group(1), match.group(2)
+        if url.startswith(('http://', 'https://', '../', 'mailto:')):
             return match.group(0)
-        return f'href="../{url}"'
+        return f'{attr}="../{url}"'
 
-    return re.sub(r'href="([^"]+)"', replacer, text)
+    return re.sub(r'(href|src)="([^"]+)"', replacer, text)
 
 def main():
     # 1. Carica template base e partials (navbar, footer)
